@@ -45,7 +45,7 @@ class Reviews(models.Model):
         related_name='reviews'
     )
     text = models.TextField(
-        verbose_name='Отзыв',
+        verbose_name='Текст отзыва',
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
