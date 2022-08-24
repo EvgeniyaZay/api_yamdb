@@ -10,7 +10,6 @@ from .views import (
 
 
 router = DefaultRouter()
-router.register()
 router.register(r'title/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
 router.register(r'title/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
@@ -19,5 +18,5 @@ router.register(r'title/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
 urlpatterns = [
     path('v1/', include(router.urls)),
     path('v1/auth/token/', views.obtain_auth_token, name='token'),
-    path('v1/auth/signup', )
+    # path('v1/auth/signup', )
 ]
