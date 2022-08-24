@@ -50,6 +50,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+
+class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reviews
         fields = '__all__'
+        model = Title
+
+
+class UserSerializer(serializers.ModelSerializer):
+    pass
