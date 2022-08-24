@@ -1,6 +1,12 @@
 from rest_framework import serializers
-from reviews.models import Comments, Reviews
 from reviews.models import Categories, Genre, Title
+
+
+class UserSerializers(serializers.ModelSerializer):
+
+    class Meta:
+        fiilds = ('username',)
+        model = User
 
 
 class CategoriesSerializers(serializers.ModelSerializer):
@@ -19,10 +25,6 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
-
-
-class UserSerializer(serializers.ModelSerializer):
-    pass
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -50,13 +52,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
-
-class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reviews
         fields = '__all__'
-        model = Title
-
-
-class UserSerializer(serializers.ModelSerializer):
-    pass
