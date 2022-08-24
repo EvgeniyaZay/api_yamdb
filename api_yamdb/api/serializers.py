@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 from reviews.models import Categories, Genre, Title
 
 
@@ -18,12 +19,6 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
-
-
-from reviews.models import Categories, Genres, Title
-from rest_framework.validators import UniqueTogetherValidator
-from rest_framework.validators import UniqueTogetherValidator
-from reviews.models import Categories, Genres, Title
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -28,7 +28,7 @@ class Title(models.Model):
                                  on_delete=models.CASCADE,
                                  related_name='titles',
                                  )
-    genre = models.ForeignKey(Genres,
+    genre = models.ForeignKey(Genre,
                               on_delete=models.CASCADE,
                               related_name='genres',
                               )
@@ -104,4 +104,6 @@ class Comments(models.Model):
 
     def __str__(self):
         return f'Отзыв: {self.review}, комментарий к отзыву: "{self.text}".'
+
+
 
