@@ -117,10 +117,17 @@ class Title(models.Model):
     genre = models.ManyToManyField(Genres,
                                    through='TitleGenre',
                                    on_delete=models.SET_NULL,
-                                   related_name='genres',
+                                   related_name='titles',
                                    verbose_name='Жанр',
                                    null=True
                                    )
+    description = models.CharField(max_length=256,
+                                   verbose_name='Описание')
+    reviews = models.ForeignKey('Reviews',
+                                on_delete=models.CASCADE,
+                                related_name='titles',
+                                verbose_name='Ревью',
+                                null=True)
 
     class Meta:
         verbose_name = 'Произведение'

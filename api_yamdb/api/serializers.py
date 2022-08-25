@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from reviews.models import Categories, Genres, Title, Comments, User, Reviews, TitleGenre
+import statistics
 
 
 class UserSerializers(serializers.ModelSerializer):
@@ -24,6 +25,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     category = CategoriesSerializers
     genre = GenreSerializer(many=True)
+    rating = serializers.SerializerMethodField()
 
     def create(self, validated_data):
         genres = validated_data.pop('genres')
@@ -44,8 +46,11 @@ class TitleSerializer(serializers.ModelSerializer):
         return title
 
     class Meta:
-        fields = '__all__'
+        fields = ('name', 'year', 'rating', 'description', 'genres', 'category',)
         model = Title
+
+    def get_rating(self, obj):
+        return statistics.mean(obj.reviews.rating)
 
 
 class CommentSerializer(serializers.ModelSerializer):
