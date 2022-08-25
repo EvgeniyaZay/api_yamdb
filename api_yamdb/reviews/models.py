@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from enum import Enum
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -35,6 +36,7 @@ class UserRole(Enum):
     def get_max_lenght():
         max_lenght = max(len(role.value) for role in UserRole)
         return max_lenght
+
 
     @staticmethod
     def get_all_roles():
@@ -133,6 +135,7 @@ class Title(models.Model):
                                  )
     genre = models.ManyToManyField(Genres,
                                    through='TitleGenre',
+                                   blank=True,
                                    )
     description = models.TextField(verbose_name='Описание',
                                    null=True,
@@ -143,27 +146,15 @@ class Title(models.Model):
                                verbose_name='Ревью',
                                null=True,
                                blank=True)
-                                   # on_delete=models.SET_NULL,
-                                   # related_name='titles',
-                                   # verbose_name='Жанр',
-                                   # null=True
-                                   )
-    description = models.CharField(max_length=256,
-                                   verbose_name='Описание')
-    review = models.ForeignKey('Reviews',
-                                on_delete=models.CASCADE,
-                                related_name='titles',
-                                verbose_name='Ревью',
-                                null=True)
 
     class Meta:
         verbose_name = 'Произведение'
-        constraints = [
-            models.UniqueConstraint(
-                fields=('genre', 'category'),
-                name='unique_title'
-            ),
-        ]
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=('genre', 'category'),
+        #         name='unique_title'
+        #     ),
+        # ]
 
     def __str__(self):
         return self.name
@@ -172,8 +163,6 @@ class Title(models.Model):
 class TitleGenre(models.Model):
     genre = models.ForeignKey(Genres, on_delete=models.SET_NULL, null=True)
     title = models.ForeignKey(Title, on_delete=models.CASCADE, null=True)
-    # title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True)
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.genre}, {self.title}'

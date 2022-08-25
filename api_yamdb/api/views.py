@@ -37,8 +37,8 @@ class CategoriesViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializers
     permission_classes = (AdminOrReadOnly,)
-    filter_backends = (filters.SearchFilter)
-    search_fields = ('=name')
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['=name']
     pagination_class = PageNumberPagination
     lookup_field = 'name'
 
@@ -46,11 +46,13 @@ class CategoriesViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializers
-    filter_backends = (filters.SearchFilter)
-    search_fields = ('=username')
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['=username']
     pagination_class = PageNumberPagination
     permission_classes = [IsAdmin]
     lookup_field = 'username'
+
+    # @api_view(['GET', 'PATCH'])
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
