@@ -49,7 +49,8 @@ class User(AbstractUser):
     )
     username = models.CharField(
         max_length=150,
-        unique=True
+        unique=True,
+        validators=[USERNAME_VALIDATOR]
     )
     email = models.EmailField(
         max_length=254,
@@ -116,14 +117,14 @@ class Title(models.Model):
                                  )
     genre = models.ManyToManyField(Genres,
                                    through='TitleGenre',
-                                   on_delete=models.SET_NULL,
-                                   related_name='titles',
-                                   verbose_name='Жанр',
-                                   null=True
+                                   # on_delete=models.SET_NULL,
+                                   # related_name='titles',
+                                   # verbose_name='Жанр',
+                                   # null=True
                                    )
     description = models.CharField(max_length=256,
                                    verbose_name='Описание')
-    reviews = models.ForeignKey('Reviews',
+    review = models.ForeignKey('Reviews',
                                 on_delete=models.CASCADE,
                                 related_name='titles',
                                 verbose_name='Ревью',
@@ -144,7 +145,8 @@ class Title(models.Model):
 
 class TitleGenre(models.Model):
     genre = models.ForeignKey(Genres, on_delete=models.SET_NULL, null=True)
-    title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True)
+    # title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.genre}, {self.title}'
