@@ -14,8 +14,7 @@ from .views import (
 
 
 router = DefaultRouter()
-router.register('users', UserViewSet)
-router.register(r'titles/(?P<title_id>\d+)/reviews',
+router.register(r'title/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
 router.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
                 r'/comments', CommentViewSet, basename='comments')
