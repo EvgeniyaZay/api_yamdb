@@ -86,10 +86,19 @@ class User(AbstractUser):
         return self.username
 
 
+SLUG_VALIDATOR = RegexValidator(r'^[-a-zA-Z0-9_]+$')
+
+
 class Categories(models.Model):
     name = models.CharField(max_length=256,
                             verbose_name='Категория')
-    slug = models.SlugField(unique=True, max_length=50)
+    slug = models.SlugField(unique=True,
+                            max_length=50,
+                            validators=[SLUG_VALIDATOR])
+
+    class Meta:
+        verbose_name = 'Категория',
+        verbose_name_plural = 'Категории'
 
     def __str__(self):
         return self.name
@@ -97,8 +106,14 @@ class Categories(models.Model):
 
 class Genres(models.Model):
     name = models.CharField(max_length=256,
-                            verbose_name='Жанр', )
-    slug = models.SlugField(unique=True, max_length=50)
+                            verbose_name='Жанр',)
+    slug = models.SlugField(unique=True,
+                            max_length=50,
+                            validators=[SLUG_VALIDATOR])
+
+    class Meta:
+        verbose_name = 'Жанр',
+        verbose_name_plural = 'Жанры'
 
     def __str__(self):
         return self.name
@@ -114,9 +129,20 @@ class Title(models.Model):
                                  related_name='titles',
                                  verbose_name='Произведение',
                                  null=True,
+                                 blank=True
                                  )
     genre = models.ManyToManyField(Genres,
                                    through='TitleGenre',
+                                   )
+    description = models.TextField(verbose_name='Описание',
+                                   null=True,
+                                   blank=True)
+    review = models.ForeignKey('Reviews',
+                               on_delete=models.SET_NULL,
+                               related_name='titles',
+                               verbose_name='Ревью',
+                               null=True,
+                               blank=True)
                                    # on_delete=models.SET_NULL,
                                    # related_name='titles',
                                    # verbose_name='Жанр',
@@ -145,6 +171,7 @@ class Title(models.Model):
 
 class TitleGenre(models.Model):
     genre = models.ForeignKey(Genres, on_delete=models.SET_NULL, null=True)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE, null=True)
     # title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
@@ -172,7 +199,7 @@ class Reviews(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews'
     )
-    rating = models.PositiveSmallIntegerField(
+    score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
         validators=[
             MinValueValidator(1, 'Выберите значение от 1 до 10'),

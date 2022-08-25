@@ -12,13 +12,13 @@ class UserSerializers(serializers.ModelSerializer):
 
 class CategoriesSerializers(serializers.ModelSerializer):
     class Meta:
-        fields = ('name',)
+        fields = ('name', 'slug',)
         model = Categories
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('name',)
+        fields = ('name', 'slug',)
         model = Genres
 
 
@@ -50,7 +50,7 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
 
     def get_rating(self, obj):
-        return statistics.mean(obj.reviews.rating)
+        return statistics.mean(obj.reviews.score)
 
 
 class CommentSerializer(serializers.ModelSerializer):
