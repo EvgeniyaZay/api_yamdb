@@ -13,7 +13,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from django.shortcuts import get_object_or_404
 
 
-class TitleViewSet(viewsets.ModelViewSet):
+class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
