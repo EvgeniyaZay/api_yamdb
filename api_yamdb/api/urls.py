@@ -5,15 +5,23 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     CommentViewSet,
-    ReviewViewSet
+    ReviewViewSet,
+    UserViewSet,
+    GenreViewSet,
+    TitlesViewSet,
+    CategoriesViewSet
 )
 
 
 router = DefaultRouter()
-router.register(r'title/(?P<title_id>\d+)/reviews',
+router.register('users', UserViewSet)
+router.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
-router.register(r'title/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
+router.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
                 r'/comments', CommentViewSet, basename='comments')
+router.register('category', CategoriesViewSet, basename='category'),
+router.register('genres', GenreViewSet, basename='genres')
+router.register('titles', TitlesViewSet, basename='titles')
 
 urlpatterns = [
     path('v1/', include(router.urls)),

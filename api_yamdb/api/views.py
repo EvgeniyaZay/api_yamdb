@@ -1,40 +1,56 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
+from rest_framework.pagination import PageNumberPagination
 from .serializers import (CategoriesSerializers,
                           GenreSerializer,
-                          TitleSerializer)
-from reviews.models import Genre, Categories, Title
-from .permissions import AdminOrReadOnly
+                          TitleSerializer,
+                          CommentSerializer,
+                          ReviewSerializer,
+                          UserSerializers
+                          )
+from reviews.models import Genres, Categories, Title, User, Reviews
+from .permissions import AdminOrReadOnly, IsAdmin
 from rest_framework.pagination import LimitOffsetPagination
+from django.shortcuts import get_object_or_404
 
 
-class TitleViewSet(viewsets.ModelViewSet):
+class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
+    filter_backends = (filters.SearchFilter)
+    search_fields = ('=name')
+    pagination_class = PageNumberPagination
+    lookup_field = 'name'
 
 
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Genre.objects.all()
+    queryset = Genres.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (AdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter)
+    search_fields = ('=name')
+    pagination_class = PageNumberPagination
+    lookup_field = 'name'
 
 
 class CategoriesViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializers
     permission_classes = (AdminOrReadOnly,)
-
-from django.shortcuts import get_object_or_404
-from reviews.models import Reviews, Title
-from .serializers import (
-    CommentSerializer,
-    ReviewSerializer
-)
+    filter_backends = (filters.SearchFilter)
+    search_fields = ('=name')
+    pagination_class = PageNumberPagination
+    lookup_field = 'name'
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    pass
+    queryset = User.objects.all()
+    serializer_class = UserSerializers
+    filter_backends = (filters.SearchFilter)
+    search_fields = ('=username')
+    pagination_class = PageNumberPagination
+    permission_classes = [IsAdmin]
+    lookup_field = 'username'
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
