@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from enum import Enum
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -36,6 +37,7 @@ class UserRole(Enum):
         max_lenght = max(len(role.value) for role in UserRole)
         return max_lenght
 
+
     @staticmethod
     def get_all_roles():
         return tuple((r.value, r.name) for r in UserRole)
@@ -49,7 +51,8 @@ class User(AbstractUser):
     )
     username = models.CharField(
         max_length=150,
-        unique=True
+        unique=True,
+        validators=[USERNAME_VALIDATOR]
     )
     email = models.EmailField(
         max_length=254,
@@ -132,6 +135,7 @@ class Title(models.Model):
                                  )
     genre = models.ManyToManyField(Genres,
                                    through='TitleGenre',
+                                   blank=True,
                                    )
     description = models.TextField(verbose_name='Описание',
                                    null=True,
@@ -145,12 +149,12 @@ class Title(models.Model):
 
     class Meta:
         verbose_name = 'Произведение'
-        constraints = [
-            models.UniqueConstraint(
-                fields=('genre', 'category'),
-                name='unique_title'
-            ),
-        ]
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=('genre', 'category'),
+        #         name='unique_title'
+        #     ),
+        # ]
 
     def __str__(self):
         return self.name
