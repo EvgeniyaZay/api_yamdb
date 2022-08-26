@@ -8,7 +8,11 @@ from .serializers import (CategoriesSerializers,
                           UserSerializers
                           )
 from reviews.models import Genres, Categories, Title, User, Reviews
-from .permissions import AdminOrReadOnly, IsAdmin
+from .permissions import (
+    AdminOrReadOnly,
+    IsAdmin,
+    IsAdminOrIsModeratorOwnerOrReadOnly
+)
 from rest_framework.pagination import LimitOffsetPagination
 from django.shortcuts import get_object_or_404
 
@@ -57,11 +61,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = [IsAdminOrIsModeratorOwnerOrReadOnly]
 
     def get_queryset(self):
-        # Получаем произведение по id из эндпоинта
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
-        # возвращаем все отзывы для найденного произведения
         return title.reviews.all()
 
     def perform_create(self, serializer):
@@ -71,6 +74,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = [IsAdminOrIsModeratorOwnerOrReadOnly]
 
     def get_queryset(self):
         review = get_object_or_404(Reviews, pk=self.kwargs.get("review_id"))

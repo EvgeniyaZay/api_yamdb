@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from reviews.models import Categories, Genres, Title, Comments, User, Reviews, TitleGenre
+from rest_framework.generics import get_object_or_404
+from rest_framework.exceptions import ValidationError
 import statistics
 
 
@@ -78,7 +80,20 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    def validate(self, data):
+        request = self.context['request']
+        title_id = self.context['view'].kwargs.get('title_id')
+        title = get_object_or_404(Title, pk=title_id)
+        if request.method == 'POST':
+            if Reviews.objects.filter(
+                title=title,
+                author=request.user
+            ).exists():
+                raise ValidationError(
+                    'На одно произведение можно оставить только один отзыв!'
+                )
+        return data
+
     class Meta:
         model = Reviews
         fields = '__all__'
-
