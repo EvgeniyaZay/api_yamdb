@@ -9,7 +9,9 @@ from .views import (
     UserViewSet,
     GenreViewSet,
     TitlesViewSet,
-    CategoriesViewSet
+    CategoriesViewSet,
+    get_confirmation_code,
+    get_token,
 )
 
 
@@ -19,12 +21,12 @@ router.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
 router.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
                 r'/comments', CommentViewSet, basename='comments')
-router.register('category', CategoriesViewSet, basename='category'),
+router.register('categories', CategoriesViewSet, basename='category'),
 router.register('genres', GenreViewSet, basename='genres')
 router.register('titles', TitlesViewSet, basename='titles')
 
 urlpatterns = [
     path('v1/', include(router.urls)),
-    path('v1/auth/token/', views.obtain_auth_token, name='token'),
-    # path('v1/auth/signup', )
+    path('v1/auth/token/', get_token, name='token'),
+    path('v1/auth/signup/', get_confirmation_code, name='get_code')
 ]

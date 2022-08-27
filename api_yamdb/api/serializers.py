@@ -4,12 +4,73 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ValidationError
 import statistics
 
+from reviews.models import UserRole
+
 
 class UserSerializers(serializers.ModelSerializer):
+    username = serializers.RegexField(regex=r'[\w.@+-]+\Z', max_length=150)
+    first_name = serializers.CharField(max_length=150, required=False)
+    last_name = serializers.CharField(max_length=150, required=False)
+    email = serializers.CharField(max_length=254)
+    role = serializers.ChoiceField(
+        choices=UserRole.get_all_roles(),
+        default=UserRole.USER.value,
+        required=False
+    )
 
     class Meta:
-        fields = ('username',)
+        fields = (
+            'bio',
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'role')
         model = User
+
+    def validate_username(self, username):
+        if username == 'me':
+            raise serializers.ValidationError(
+                'Недопустимое имя пользователя'
+            )
+        duplicate_name = User.objects.filter(
+            username=username
+        ).exists()
+        if duplicate_name:
+            raise serializers.ValidationError(
+                'Пользователь с таким именем уже существует'
+            )
+        return username
+        #     raise serializers.ValidationError(
+        #         'Недопустимое имя пользователя'
+        #     )
+        # return data
+
+    def validate_email(self, email):
+        duplicate_email = User.objects.filter(
+            email=email
+        ).exists()
+        if duplicate_email:
+            raise serializers.ValidationError(
+                'Пользователь с таким emial уже существует'
+            )
+        return email
+
+
+class GetCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=254, required=True)
+    username = serializers.RegexField(regex=r'[\w.@+-]+\Z', max_length=150)
+
+    def validate_username(self, username):
+        # raise UserSerializers.validate_username(self, username)
+        raise serializers.ValidationError(username)
+    def validate_email(self, email):
+        # raise UserSerializers.validate_email(self, email)
+        raise serializers.ValidationError(email)
+
+class GetTokenSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
 
 
 class CategoriesSerializers(serializers.ModelSerializer):
