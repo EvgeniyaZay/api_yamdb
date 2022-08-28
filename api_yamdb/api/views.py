@@ -11,6 +11,7 @@ from .serializers import (CategoriesSerializers,
                           UserSerializers,
                           GetCodeSerializer,
                           GetTokenSerializer,
+                          ReadOnlyTitleSerializer
                           )
 from reviews.models import Genres, Categories, Title, User, Reviews, UserRole
 from .permissions import (
@@ -18,6 +19,9 @@ from .permissions import (
     IsAdmin,
     IsAdminOrIsModeratorOwnerOrReadOnly
 )
+import django_filters
+from django.db.models import Avg
+from django_filters.rest_framework import DjangoFilterBackend
 # from django.core import mail
 # from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.tokens import AccessToken
@@ -26,6 +30,7 @@ from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import SAFE_METHODS
 
 from rest_framework import mixins
 
@@ -39,14 +44,44 @@ class ListCreateDestroyViewSet(
     pass
 
 
+class TitlesFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(
+        field_name='name',
+        lookup_expr='contains'
+    )
+    category = django_filters.CharFilter(
+        field_name='category__slug',
+        lookup_expr='contains'
+
+    )
+    genre = django_filters.CharFilter(
+        field_name='genre__slug',
+        lookup_expr='contains'
+    )
+
+    class Meta:
+        model = Title
+        fields = ('name', 'genre', 'category', 'year')
+
 class TitlesViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        score=Avg("reviews__score")
+    )
+    ordering = ['name']
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('=name')
+    filter_backends = (DjangoFilterBackend,)
+    # search_fields = ('=name')
     pagination_class = PageNumberPagination
-    lookup_field = 'name'
+    # lookup_field = 'name'
+    filterset_class = TitlesFilter
+
+    def get_serializer_class(self):
+        # if self.action in ("retrieve", "list"):
+        if self.request.method == 'GET':
+            return ReadOnlyTitleSerializer
+        # return TitleSerializer
+        return TitleSerializer
 
 
 class GenreViewSet(ListCreateDestroyViewSet):

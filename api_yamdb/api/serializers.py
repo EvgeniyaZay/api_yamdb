@@ -102,6 +102,7 @@ class TitleSerializer(serializers.ModelSerializer):
         slug_field='slug',
         queryset=Categories.objects.all()
     )
+    # rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Title
@@ -114,6 +115,19 @@ class TitleSerializer(serializers.ModelSerializer):
             'description',
             'rating',
         )
+
+
+class ReadOnlyTitleSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField()
+    genre = GenreSerializer(many=True)
+    category = CategoriesSerializers()
+
+    class Meta:
+        model = Title
+        fields = '__all__'
+
+    def get_rating(self, obj):
+        return obj.score
 
 
 class CommentSerializer(serializers.ModelSerializer):
