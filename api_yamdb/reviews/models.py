@@ -1,5 +1,5 @@
 from django.db import models
-from django.conf import settings
+# from django.conf import settings
 from enum import Enum
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -37,7 +37,6 @@ class UserRole(Enum):
         max_lenght = max(len(role.value) for role in UserRole)
         return max_lenght
 
-
     @staticmethod
     def get_all_roles():
         return tuple((r.value, r.name) for r in UserRole)
@@ -52,7 +51,7 @@ class User(AbstractUser):
         (MODERATOR, 'Модератор'),
         (ADMIN, 'Админ'),
     )
-    USERNAME_VALIDATOR = RegexValidator(r'^[\w.@+-]+\z')
+    # USERNAME_VALIDATOR = RegexValidator(r'^[\w.@+-]+\z')
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -60,7 +59,7 @@ class User(AbstractUser):
     username = models.CharField(
         max_length=150,
         unique=True,
-        validators=[USERNAME_VALIDATOR]
+        # validators=[USERNAME_VALIDATOR]
     )
     email = models.EmailField(
         max_length=254,
@@ -165,22 +164,32 @@ class Title(models.Model):
     #                            verbose_name='Ревью',
     #                            null=True,
     #                            blank=True)
+    rating = models.IntegerField(
+        verbose_name='Рейтинг',
+        null=True,
+        default=None
+    )
 
-    class Meta:
-        verbose_name = 'Произведение'
-        constraints = [
-            models.UniqueConstraint(
-                fields=('genre', 'category'),
-                name='unique_title'
-            ),
-        ]
+    # class Meta:
+    #     verbose_name = 'Произведение'
+    #     constraints = [
+    #         models.UniqueConstraint(
+    #             fields=('genre', 'category'),
+    #             name='unique_title'
+    #         ),
+    #     ]
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
+        ordering = ['name']
+
 
 class TitleGenre(models.Model):
-    genre = models.ForeignKey(Genres, on_delete=models.SET_NULL, null=True)
+    genre = models.ForeignKey(Genres, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -217,6 +226,7 @@ class Reviews(models.Model):
 
     class Meta:
         verbose_name = 'Отзыв'
+        ordering = ['pub_date']
         constraints = [
             models.UniqueConstraint(
                 fields=['title', 'author'],
@@ -251,6 +261,7 @@ class Comments(models.Model):
 
     class Meta:
         verbose_name = 'Комментарий к отзыву'
+        ordering = ['pub_date']
 
     def __str__(self):
         return f'Отзыв: {self.review}, комментарий к отзыву: "{self.text}".'
