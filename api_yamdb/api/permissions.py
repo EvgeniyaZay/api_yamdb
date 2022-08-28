@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from reviews.models import UserRole
+from reviews.models import USER
 
 
 class AdminOrReadOnly(permissions.BasePermission):
@@ -18,7 +18,7 @@ class AdminOrReadOnly(permissions.BasePermission):
 class IsAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user.is_authenticated:
-            is_admin = request.user.role == UserRole.USER
+            is_admin = request.user.role == USER
             return is_admin or request.user.is_superuser
 
 

@@ -7,6 +7,15 @@ from django.core.validators import RegexValidator
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+USER = 'user'
+MODERATOR = 'moderator'
+ADMIN = 'admin'
+USER_ROLE_CHOICES = (
+    (USER, 'Пользователь'),
+    (MODERATOR, 'Модератор'),
+    (ADMIN, 'Админ'),
+)
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **kwargs):
@@ -27,31 +36,31 @@ class UserManager(BaseUserManager):
         return user
 
 
-class UserRole(Enum):
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-
-    @staticmethod
-    def get_max_lenght():
-        max_lenght = max(len(role.value) for role in UserRole)
-        return max_lenght
-
-
-    @staticmethod
-    def get_all_roles():
-        return tuple((r.value, r.name) for r in UserRole)
+# class UserRole(Enum):
+    # USER = 'user'
+    # MODERATOR = 'moderator'
+    # ADMIN = 'admin'
+    #
+    # @staticmethod
+    # def get_max_lenght():
+    #     max_lenght = max(len(role.value) for role in UserRole)
+    #     return max_lenght
+    #
+    #
+    # @staticmethod
+    # def get_all_roles():
+    #     return tuple((r.value, r.name) for r in UserRole)
 
 
 class User(AbstractUser):
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-    USER_ROLE_CHOICES = (
-        (USER, 'Пользователь'),
-        (MODERATOR, 'Модератор'),
-        (ADMIN, 'Админ'),
-    )
+    # USER = 'user'
+    # MODERATOR = 'moderator'
+    # ADMIN = 'admin'
+    # USER_ROLE_CHOICES = (
+    #     (USER, 'Пользователь'),
+    #     (MODERATOR, 'Модератор'),
+    #     (ADMIN, 'Админ'),
+    # )
     USERNAME_VALIDATOR = RegexValidator(r'^[\w.@+-]+\z')
     bio = models.TextField(
         'Биография',
@@ -90,8 +99,8 @@ class User(AbstractUser):
     )
     objects = UserManager()
 
-    def __str__(self):
-        return self.username
+    # def __str__(self):
+    #     return self.username
 
     class Meta:
         verbose_name = "Пользователь"

@@ -4,19 +4,19 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ValidationError
 import statistics
 
-from reviews.models import UserRole
-
+# from reviews.models import USER
+#
 
 class UserSerializers(serializers.ModelSerializer):
-    username = serializers.RegexField(regex=r'[\w.@+-]+\Z', max_length=150)
-    first_name = serializers.CharField(max_length=150, required=False)
-    last_name = serializers.CharField(max_length=150, required=False)
-    email = serializers.CharField(max_length=254)
-    role = serializers.ChoiceField(
-        choices=UserRole.get_all_roles(),
-        default=UserRole.USER.value,
-        required=False
-    )
+    # username = serializers.RegexField(regex=r'[\w.@+-]+\Z', max_length=150)
+    # first_name = serializers.CharField(max_length=150, required=False)
+    # last_name = serializers.CharField(max_length=150, required=False)
+    # email = serializers.CharField(max_length=254)
+    # role = serializers.ChoiceField(
+    #     choices=USER.get_all_roles(),
+    #     default=UserRole.USER.value,
+    #     required=False
+    # )
 
     class Meta:
         fields = (

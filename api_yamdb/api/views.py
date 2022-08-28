@@ -12,7 +12,7 @@ from .serializers import (CategoriesSerializers,
                           GetCodeSerializer,
                           GetTokenSerializer,
                           )
-from reviews.models import Genres, Categories, Title, User, Reviews, UserRole
+from reviews.models import Genres, Categories, Title, User, Reviews
 from .permissions import (
     AdminOrReadOnly,
     IsAdmin,
@@ -75,23 +75,23 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializers(user)
             return Response(serializer.data, status.HTTP_200_OK)
 
-        if request.method == "PATCH":
-            user = get_object_or_404(User, id=request.user.id)
-            fixed_data = self.request.data.copy()
-            if('role' in self.request.data
-                    and user.role == UserRole.USER.value):
-                fixed_data['role'] = UserRole.USER.value
-            serializer = UserSerializers(
-                user,
-                data=fixed_data,
-                partial=True
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK
-            )
+        # if request.method == "PATCH":
+        #     user = get_object_or_404(User, id=request.user.id)
+        #     fixed_data = self.request.data.copy()
+        #     if('role' in self.request.data
+        #             and user.role == USER.value):
+        #         fixed_data['role'] = UserRole.USER.value
+        #     serializer = UserSerializers(
+        #         user,
+        #         data=fixed_data,
+        #         partial=True
+        #     )
+        #     serializer.is_valid(raise_exception=True)
+        #     serializer.save()
+        #     return Response(
+        #         data=serializer.data,
+        #         status=status.HTTP_200_OK
+        #     )
         return Response(
             data=request.data,
             status=status.HTTP_400_BAD_REQUEST
