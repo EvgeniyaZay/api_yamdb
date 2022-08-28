@@ -7,15 +7,6 @@ from django.core.validators import RegexValidator
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-USER = 'user'
-MODERATOR = 'moderator'
-ADMIN = 'admin'
-USER_ROLE_CHOICES = (
-    (USER, 'Пользователь'),
-    (MODERATOR, 'Модератор'),
-    (ADMIN, 'Админ'),
-)
-
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **kwargs):
@@ -36,31 +27,31 @@ class UserManager(BaseUserManager):
         return user
 
 
-# class UserRole(Enum):
-    # USER = 'user'
-    # MODERATOR = 'moderator'
-    # ADMIN = 'admin'
-    #
-    # @staticmethod
-    # def get_max_lenght():
-    #     max_lenght = max(len(role.value) for role in UserRole)
-    #     return max_lenght
-    #
-    #
-    # @staticmethod
-    # def get_all_roles():
-    #     return tuple((r.value, r.name) for r in UserRole)
+class UserRole(Enum):
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+
+    @staticmethod
+    def get_max_lenght():
+        max_lenght = max(len(role.value) for role in UserRole)
+        return max_lenght
+
+
+    @staticmethod
+    def get_all_roles():
+        return tuple((r.value, r.name) for r in UserRole)
 
 
 class User(AbstractUser):
-    # USER = 'user'
-    # MODERATOR = 'moderator'
-    # ADMIN = 'admin'
-    # USER_ROLE_CHOICES = (
-    #     (USER, 'Пользователь'),
-    #     (MODERATOR, 'Модератор'),
-    #     (ADMIN, 'Админ'),
-    # )
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+    USER_ROLE_CHOICES = (
+        (USER, 'Пользователь'),
+        (MODERATOR, 'Модератор'),
+        (ADMIN, 'Админ'),
+    )
     USERNAME_VALIDATOR = RegexValidator(r'^[\w.@+-]+\z')
     bio = models.TextField(
         'Биография',
@@ -215,7 +206,7 @@ class Reviews(models.Model):
         User,
         verbose_name='Автор',
         on_delete=models.CASCADE,
-        # related_name='reviews'
+        related_name='reviews'
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
@@ -227,7 +218,6 @@ class Reviews(models.Model):
 
     class Meta:
         verbose_name = 'Отзыв'
-        ordering = ['pub_date']
         constraints = [
             models.UniqueConstraint(
                 fields=['title', 'author'],
@@ -257,12 +247,11 @@ class Comments(models.Model):
         User,
         verbose_name='Автор комментария',
         on_delete=models.CASCADE,
-        # related_name='comments'
+        related_name='comments'
     )
 
     class Meta:
         verbose_name = 'Комментарий к отзыву'
-        ordering = ['pub_date']
 
     def __str__(self):
         return f'Отзыв: {self.review}, комментарий к отзыву: "{self.text}".'
