@@ -215,7 +215,7 @@ class Reviews(models.Model):
         User,
         verbose_name='Автор',
         on_delete=models.CASCADE,
-        related_name='reviews'
+        # related_name='reviews'
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
@@ -227,6 +227,7 @@ class Reviews(models.Model):
 
     class Meta:
         verbose_name = 'Отзыв'
+        ordering = ['pub_date']
         constraints = [
             models.UniqueConstraint(
                 fields=['title', 'author'],
@@ -256,11 +257,12 @@ class Comments(models.Model):
         User,
         verbose_name='Автор комментария',
         on_delete=models.CASCADE,
-        related_name='comments'
+        # related_name='comments'
     )
 
     class Meta:
         verbose_name = 'Комментарий к отзыву'
+        ordering = ['pub_date']
 
     def __str__(self):
         return f'Отзыв: {self.review}, комментарий к отзыву: "{self.text}".'
