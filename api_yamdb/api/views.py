@@ -18,44 +18,55 @@ from .permissions import (
     IsAdmin,
     IsAdminOrIsModeratorOwnerOrReadOnly
 )
-from django.core import mail
-from rest_framework_simplejwt.tokens import RefreshToken
+# from django.core import mail
+# from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
+# from rest_framework.pagination import LimitOffsetPagination
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from rest_framework.decorators import api_view, permission_classes
+
+from rest_framework import mixins
+
+
+class ListCreateDestroyViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    pass
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
-    filter_backends = (filters.SearchFilter)
+    filter_backends = (filters.SearchFilter,)
     search_fields = ('=name')
     pagination_class = PageNumberPagination
     lookup_field = 'name'
 
 
-class GenreViewSet(viewsets.ReadOnlyModelViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (AdminOrReadOnly,)
-    filter_backends = (filters.SearchFilter)
+    filter_backends = (filters.SearchFilter,)
     search_fields = ('=name')
     pagination_class = PageNumberPagination
-    lookup_field = 'name'
+    lookup_field = 'slug'
 
 
-class CategoriesViewSet(viewsets.ReadOnlyModelViewSet):
+class CategoriesViewSet(ListCreateDestroyViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializers
     permission_classes = (AdminOrReadOnly,)
     filter_backends = [filters.SearchFilter]
     search_fields = ['=name']
     pagination_class = PageNumberPagination
-    lookup_field = 'name'
+    lookup_field = 'slug'
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -126,7 +137,6 @@ def get_confirmation_code(request):
         request.data,
         status=status.HTTP_200_OK
     )
-
 
 
 @api_view(['POST'])

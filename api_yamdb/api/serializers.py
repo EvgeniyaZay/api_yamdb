@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from reviews.models import Categories, Genres, Title, Comments, User, Reviews, TitleGenre
+from reviews.models import Categories, Genres, Title, Comments, User, Reviews
 from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ValidationError
-import statistics
+from rest_framework.validators import UniqueValidator
+# import statistics
 
 from reviews.models import UserRole
 
@@ -57,16 +58,22 @@ class UserSerializers(serializers.ModelSerializer):
         return email
 
 
-class GetCodeSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=254, required=True)
-    username = serializers.RegexField(regex=r'[\w.@+-]+\Z', max_length=150)
+class GetCodeSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+    email = serializers.EmailField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
 
-    def validate_username(self, username):
-        # raise UserSerializers.validate_username(self, username)
-        raise serializers.ValidationError(username)
-    def validate_email(self, email):
-        # raise UserSerializers.validate_email(self, email)
-        raise serializers.ValidationError(email)
+    class Meta:
+        fields = ("username", "email")
+        model = User
+
 
 class GetTokenSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
@@ -86,34 +93,27 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    category = CategoriesSerializers
-    genre = GenreSerializer(many=True)
-    rating = serializers.SerializerMethodField()
-
-    def create(self, validated_data):
-        genres = validated_data.pop('genres')
-        categories = validated_data.pop('category')
-        title = Title.objects.create(**validated_data)
-        if genres:
-            for genre in genres:
-                current_genre, status = Genres.objects.get_or_create(
-                    **genre)
-                TitleGenre.objects.create(
-                    genre=current_genre, title=title)
-        elif categories:
-            for category in categories:
-                current_category, status = Genres.objects.get_or_create(
-                    **category)
-                TitleGenre.objects.create(
-                    category=current_category, title=title)
-        return title
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        many=True,
+        queryset=Genres.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Categories.objects.all()
+    )
 
     class Meta:
-        fields = ('name', 'year', 'rating', 'description', 'genres', 'category',)
         model = Title
-
-    def get_rating(self, obj):
-        return statistics.mean(obj.reviews.score)
+        fields = (
+            'id',
+            'name',
+            'year',
+            'category',
+            'genre',
+            'description',
+            'rating',
+        )
 
 
 class CommentSerializer(serializers.ModelSerializer):

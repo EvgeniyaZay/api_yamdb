@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Comments, Reviews, User
-from django.contrib import admin
+# from django.contrib import admin
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -17,6 +17,7 @@ class UserAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
     list_editable = ('role',)
 
+
 class ReviewAdmin(admin.ModelAdmin):
     list_display = (
         'id',
@@ -25,6 +26,7 @@ class ReviewAdmin(admin.ModelAdmin):
         'score',
         'pub_date'
     )
+
 
 admin.site.register(Comments)
 admin.site.register(Reviews, ReviewAdmin)
