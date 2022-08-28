@@ -32,8 +32,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
-    filter_backends = (filters.SearchFilter)
-    search_fields = ('=name')
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('=name',)
     pagination_class = PageNumberPagination
     lookup_field = 'name'
 
@@ -42,8 +42,8 @@ class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (AdminOrReadOnly,)
-    filter_backends = (filters.SearchFilter)
-    search_fields = ('=name')
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('=name',)
     pagination_class = PageNumberPagination
     lookup_field = 'name'
 
