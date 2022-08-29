@@ -27,7 +27,6 @@ from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from rest_framework.decorators import api_view, permission_classes
-
 from rest_framework import mixins
 
 
@@ -74,10 +73,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
     filterset_class = TitlesFilter
 
     def get_serializer_class(self):
-        # if self.action in ("retrieve", "list"):
         if self.request.method == 'GET':
             return ReadOnlyTitleSerializer
-        # return TitleSerializer
         return TitleSerializer
 
 

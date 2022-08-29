@@ -22,7 +22,11 @@ class Command(BaseCommand):
             return
         print("Loading titles data...")
 
-        for row in DictReader(open('./static/data/titles.csv', encoding='utf-8', newline='')):
+        for row in DictReader(open(
+            './static/data/titles.csv',
+            encoding='utf-8',
+            newline=''
+        )):
             child = Title(
                 id=row['id'],
                 name=row['name'],

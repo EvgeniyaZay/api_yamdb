@@ -22,7 +22,11 @@ class Command(BaseCommand):
             return
         print("Loading comments data...")
 
-        for row in DictReader(open('./static/data/comments.csv', encoding='utf-8', newline='')):
+        for row in DictReader(open(
+            './static/data/comments.csv',
+            encoding='utf-8',
+            newline=''
+        )):
             child = Comments(
                 id=row['id'],
                 review_id=row['review_id'],

@@ -22,7 +22,11 @@ class Command(BaseCommand):
             return
         print("Loading users data...")
 
-        for row in DictReader(open('./static/data/users.csv', encoding='utf-8', newline='')):
+        for row in DictReader(open(
+            './static/data/users.csv',
+            encoding='utf-8',
+            newline=''
+        )):
             child = User(
                 id=row['id'],
                 username=row['username'],

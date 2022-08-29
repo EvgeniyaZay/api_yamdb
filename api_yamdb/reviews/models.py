@@ -1,10 +1,7 @@
 from django.db import models
-# from django.conf import settings
 from enum import Enum
-
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
-
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -51,7 +48,6 @@ class User(AbstractUser):
         (MODERATOR, 'Модератор'),
         (ADMIN, 'Админ'),
     )
-    # USERNAME_VALIDATOR = RegexValidator(r'^[\w.@+-]+\z')
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -59,7 +55,6 @@ class User(AbstractUser):
     username = models.CharField(
         max_length=150,
         unique=True,
-        # validators=[USERNAME_VALIDATOR]
     )
     email = models.EmailField(
         max_length=254,
@@ -89,9 +84,6 @@ class User(AbstractUser):
     )
     objects = UserManager()
 
-    # def __str__(self):
-    #     return self.username
-
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
@@ -110,11 +102,15 @@ SLUG_VALIDATOR = RegexValidator(r'^[-a-zA-Z0-9_]+$')
 
 
 class Categories(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Категория')
-    slug = models.SlugField(unique=True,
-                            max_length=50,
-                            validators=[SLUG_VALIDATOR])
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Категория'
+    )
+    slug = models.SlugField(
+        unique=True,
+        max_length=50,
+        validators=[SLUG_VALIDATOR]
+    )
 
     class Meta:
         verbose_name = 'Категория',
@@ -125,11 +121,15 @@ class Categories(models.Model):
 
 
 class Genres(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Жанр', )
-    slug = models.SlugField(unique=True,
-                            max_length=50,
-                            validators=[SLUG_VALIDATOR])
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Жанр',
+    )
+    slug = models.SlugField(
+        unique=True,
+        max_length=50,
+        validators=[SLUG_VALIDATOR]
+    )
 
     class Meta:
         verbose_name = 'Жанр',
@@ -140,31 +140,35 @@ class Genres(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Произведение')
-    year = models.IntegerField(verbose_name='Год издания')
-    category = models.ForeignKey(Categories,
-                                 on_delete=models.SET_NULL,
-                                 related_name='titles',
-                                 verbose_name='Произведение',
-                                 null=True,
-                                 blank=True
-                                 )
-    genre = models.ManyToManyField(Genres,
-                                   through='TitleGenre',
-                                   # blank=True,
-                                   )
-    description = models.TextField(verbose_name='Описание',
-                                   null=True,
-                                   blank=True)
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Произведение'
+    )
+    year = models.IntegerField(
+        verbose_name='Год издания'
+    )
+    category = models.ForeignKey(
+        Categories,
+        on_delete=models.SET_NULL,
+        related_name='titles',
+        verbose_name='Произведение',
+        null=True,
+        blank=True
+    )
+    genre = models.ManyToManyField(
+        Genres,
+        through='TitleGenre',
+    )
+    description = models.TextField(
+        verbose_name='Описание',
+        null=True,
+        blank=True
+    )
     rating = models.IntegerField(
         verbose_name='Рейтинг',
         null=True,
         default=None
     )
-
-    class Meta:
-        verbose_name = 'Произведение'
 
     def __str__(self):
         return self.name

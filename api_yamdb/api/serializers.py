@@ -3,8 +3,6 @@ from reviews.models import Categories, Genres, Title, Comments, User, Review
 from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
-# import statistics
-
 from reviews.models import UserRole
 
 
@@ -19,16 +17,6 @@ class UserSerializers(serializers.ModelSerializer):
         required=False
     )
 
-    class Meta:
-        fields = (
-            'bio',
-            'username',
-            'first_name',
-            'last_name',
-            'email',
-            'role')
-        model = User
-
     def validate_username(self, username):
         if username == 'me':
             raise serializers.ValidationError(
@@ -42,10 +30,6 @@ class UserSerializers(serializers.ModelSerializer):
                 'Пользователь с таким именем уже существует'
             )
         return username
-        #     raise serializers.ValidationError(
-        #         'Недопустимое имя пользователя'
-        #     )
-        # return data
 
     def validate_email(self, email):
         duplicate_email = User.objects.filter(
@@ -56,6 +40,16 @@ class UserSerializers(serializers.ModelSerializer):
                 'Пользователь с таким emial уже существует'
             )
         return email
+
+    class Meta:
+        fields = (
+            'bio',
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'role')
+        model = User
 
 
 class GetCodeSerializer(serializers.ModelSerializer):
@@ -69,6 +63,13 @@ class GetCodeSerializer(serializers.ModelSerializer):
             UniqueValidator(queryset=User.objects.all())
         ]
     )
+
+    def validate_username(self, username):
+        if username == 'me':
+            raise serializers.ValidationError(
+                'Недопустимое имя пользователя'
+            )
+        return username
 
     class Meta:
         fields = ("username", "email")
