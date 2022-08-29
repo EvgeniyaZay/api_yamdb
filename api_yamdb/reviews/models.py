@@ -32,12 +32,6 @@ class UserRole(Enum):
     MODERATOR = 'moderator'
     ADMIN = 'admin'
 
-    # USER_ROLE_CHOICES = (
-    #     (USER, 'Пользователь'),
-    #     (MODERATOR, 'Модератор'),
-    #     (ADMIN, 'Админ'),
-    # )
-
     @staticmethod
     def get_max_lenght():
         max_lenght = max(len(role.value) for role in UserRole)
