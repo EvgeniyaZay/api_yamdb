@@ -1,8 +1,8 @@
 from csv import DictReader
+
 from django.core.management import BaseCommand
 
 from reviews.models import Comments
-
 
 ALREDY_LOADED_ERROR_MESSAGE = """
 If you need to reload the child data from the CSV file,
@@ -23,9 +23,9 @@ class Command(BaseCommand):
         print("Loading comments data...")
 
         for row in DictReader(open(
-            './static/data/comments.csv',
-            encoding='utf-8',
-            newline=''
+                './static/data/comments.csv',
+                encoding='utf-8',
+                newline=''
         )):
             child = Comments(
                 id=row['id'],

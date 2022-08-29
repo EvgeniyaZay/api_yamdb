@@ -1,8 +1,11 @@
-from django.db import models
 from enum import Enum
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.validators import RegexValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import RegexValidator
+from django.db import models
+
+SLUG_VALIDATOR = RegexValidator(r'^[-a-zA-Z0-9_]+$')
 
 
 class UserManager(BaseUserManager):
@@ -29,6 +32,12 @@ class UserRole(Enum):
     MODERATOR = 'moderator'
     ADMIN = 'admin'
 
+    # USER_ROLE_CHOICES = (
+    #     (USER, 'Пользователь'),
+    #     (MODERATOR, 'Модератор'),
+    #     (ADMIN, 'Админ'),
+    # )
+
     @staticmethod
     def get_max_lenght():
         max_lenght = max(len(role.value) for role in UserRole)
@@ -40,14 +49,6 @@ class UserRole(Enum):
 
 
 class User(AbstractUser):
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-    USER_ROLE_CHOICES = (
-        (USER, 'Пользователь'),
-        (MODERATOR, 'Модератор'),
-        (ADMIN, 'Админ'),
-    )
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -77,9 +78,9 @@ class User(AbstractUser):
         default='000000'
     )
     role = models.CharField(
-        max_length=16,
-        choices=USER_ROLE_CHOICES,
-        default=USER,
+        max_length=UserRole.get_max_lenght(),
+        choices=UserRole.get_all_roles(),
+        default=UserRole.USER.value,
         verbose_name='Роль'
     )
     objects = UserManager()
@@ -96,9 +97,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
-
-SLUG_VALIDATOR = RegexValidator(r'^[-a-zA-Z0-9_]+$')
 
 
 class Categories(models.Model):

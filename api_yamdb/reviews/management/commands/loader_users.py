@@ -1,8 +1,8 @@
 from csv import DictReader
+
 from django.core.management import BaseCommand
 
 from reviews.models import User
-
 
 ALREDY_LOADED_ERROR_MESSAGE = """
 If you need to reload the child data from the CSV file,
@@ -23,9 +23,9 @@ class Command(BaseCommand):
         print("Loading users data...")
 
         for row in DictReader(open(
-            './static/data/users.csv',
-            encoding='utf-8',
-            newline=''
+                './static/data/users.csv',
+                encoding='utf-8',
+                newline=''
         )):
             child = User(
                 id=row['id'],

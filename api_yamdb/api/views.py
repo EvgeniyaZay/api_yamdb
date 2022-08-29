@@ -1,68 +1,33 @@
-from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
-from rest_framework import viewsets, filters, status
+from django.core.mail import send_mail
+from django.db.models import Avg
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import (CategoriesSerializers,
-                          GenreSerializer,
-                          TitleSerializer,
-                          CommentSerializer,
-                          ReviewSerializer,
-                          UserSerializers,
-                          GetCodeSerializer,
-                          GetTokenSerializer,
-                          ReadOnlyTitleSerializer
-                          )
-from reviews.models import Genres, Categories, Title, User, Review, UserRole
-from .permissions import (
-    AdminOrReadOnly,
-    IsAdmin,
-    IsAdminOrIsModeratorOwnerOrReadOnly
-)
-import django_filters
-from django.db.models import Avg
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.decorators import action
-from django.shortcuts import get_object_or_404
-from django.core.mail import send_mail
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework import mixins
 
+from reviews.models import Genres, Categories, Title, User, Review, UserRole
 
-class ListCreateDestroyViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
-    pass
-
-
-class TitlesFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(
-        field_name='name',
-        lookup_expr='contains'
-    )
-    category = django_filters.CharFilter(
-        field_name='category__slug',
-        lookup_expr='contains'
-
-    )
-    genre = django_filters.CharFilter(
-        field_name='genre__slug',
-        lookup_expr='contains'
-    )
-
-    class Meta:
-        model = Title
-        fields = ('name', 'genre', 'category', 'year')
+from .filters import TitlesFilter
+from .mixins import ListCreateDestroyViewSet
+from .permissions import (AdminOrReadOnly, IsAdmin,
+                          IsAdminOrIsModeratorOwnerOrReadOnly)
+from .serializers import (CategoriesSerializers, CommentSerializer,
+                          GetCodeSerializer, GenreSerializer,
+                          GetTokenSerializer, ReadOnlyTitleSerializer,
+                          ReviewSerializer, TitleSerializer,
+                          UserSerializers,)
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
         score=Avg("reviews__score")
-    ) .order_by('name')
+    ).order_by('name')
     ordering = ['name']
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
@@ -118,7 +83,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == "PATCH":
             user = get_object_or_404(User, id=request.user.id)
             fixed_data = self.request.data.copy()
-            if('role' in self.request.data
+            if ('role' in self.request.data
                     and user.role == UserRole.USER.value):
                 fixed_data['role'] = UserRole.USER.value
             serializer = UserSerializers(

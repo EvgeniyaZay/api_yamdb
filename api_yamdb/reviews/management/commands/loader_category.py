@@ -1,7 +1,8 @@
 from csv import DictReader
-from django.core.management import BaseCommand
-from reviews.models import Categories
 
+from django.core.management import BaseCommand
+
+from reviews.models import Categories
 
 ALREDY_LOADED_ERROR_MESSAGE = """
 If you need to reload the child data from the CSV file,
@@ -23,14 +24,14 @@ class Command(BaseCommand):
         print("Loading category data...")
 
         for row in DictReader(open(
-            './static/data/category.csv',
-            encoding='utf-8',
-            newline=''
+                './static/data/category.csv',
+                encoding='utf-8',
+                newline=''
         )):
             child = Categories(
-              id=row['id'],
-              name=row['name'],
-              slug=row['slug']
+                id=row['id'],
+                name=row['name'],
+                slug=row['slug']
             )
             child.save()
         print("Successfully!")
