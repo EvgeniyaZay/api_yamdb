@@ -22,7 +22,7 @@ class Command(BaseCommand):
             return
         print("Loading review data...")
 
-        for row in DictReader(open('./static/data/review.csv')):
+        for row in DictReader(open('./static/data/review.csv', encoding='utf-8', newline='')):
             child = Reviews(
                 id=row['id'],
                 title_id=row['title_id'],

@@ -22,7 +22,7 @@ class Command(BaseCommand):
             return
         print("Loading genre_title data...")
 
-        for row in DictReader(open('./static/data/genre_title.csv')):
+        for row in DictReader(open('./static/data/genre_title.csv', encoding='utf-8', newline='')):
             child = TitleGenre(
                 id=row['id'],
                 title_id=row['title_id'],

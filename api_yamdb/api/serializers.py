@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from reviews.models import Categories, Genres, Title, Comments, User, Reviews
+from reviews.models import Categories, Genres, Title, Comments, User, Review
 from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
@@ -102,7 +102,6 @@ class TitleSerializer(serializers.ModelSerializer):
         slug_field='slug',
         queryset=Categories.objects.all()
     )
-    # rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Title
@@ -160,7 +159,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         title_id = self.context['view'].kwargs.get('title_id')
         title = get_object_or_404(Title, pk=title_id)
         if request.method == 'POST':
-            if Reviews.objects.filter(
+            if Review.objects.filter(
                 title=title,
                 author=request.user
             ).exists():
@@ -170,5 +169,5 @@ class ReviewSerializer(serializers.ModelSerializer):
         return data
 
     class Meta:
-        model = Reviews
+        model = Review
         fields = '__all__'

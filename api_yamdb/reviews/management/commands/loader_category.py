@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         print("Loading category data...")
 
-        for row in DictReader(open('./static/data/category.csv')):
+        for row in DictReader(open('./static/data/category.csv', encoding='utf-8', newline='')):
             child = Categories(
               id=row['id'],
               name=row['name'],

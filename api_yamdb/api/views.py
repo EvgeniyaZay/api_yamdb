@@ -13,7 +13,7 @@ from .serializers import (CategoriesSerializers,
                           GetTokenSerializer,
                           ReadOnlyTitleSerializer
                           )
-from reviews.models import Genres, Categories, Title, User, Reviews, UserRole
+from reviews.models import Genres, Categories, Title, User, Review, UserRole
 from .permissions import (
     AdminOrReadOnly,
     IsAdmin,
@@ -22,15 +22,11 @@ from .permissions import (
 import django_filters
 from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
-# from django.core import mail
-# from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.decorators import action
-# from rest_framework.pagination import LimitOffsetPagination
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import SAFE_METHODS
 
 from rest_framework import mixins
 
@@ -63,19 +59,18 @@ class TitlesFilter(django_filters.FilterSet):
         model = Title
         fields = ('name', 'genre', 'category', 'year')
 
+
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
         score=Avg("reviews__score")
-    )
+    ) .order_by('name')
     ordering = ['name']
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
     filter_backends = (DjangoFilterBackend,)
-    # search_fields = ('=name')
     pagination_class = PageNumberPagination
-    # lookup_field = 'name'
     filterset_class = TitlesFilter
 
     def get_serializer_class(self):
@@ -87,17 +82,17 @@ class TitlesViewSet(viewsets.ModelViewSet):
 
 
 class GenreViewSet(ListCreateDestroyViewSet):
-    queryset = Genres.objects.all()
+    queryset = Genres.objects.all().order_by('-id')
     serializer_class = GenreSerializer
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('=name')
+    search_fields = ['=name']
     pagination_class = PageNumberPagination
     lookup_field = 'slug'
 
 
 class CategoriesViewSet(ListCreateDestroyViewSet):
-    queryset = Categories.objects.all()
+    queryset = Categories.objects.all().order_by('-id')
     serializer_class = CategoriesSerializers
     permission_classes = (AdminOrReadOnly,)
     filter_backends = [filters.SearchFilter]
@@ -107,15 +102,15 @@ class CategoriesViewSet(ListCreateDestroyViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('-id')
     serializer_class = UserSerializers
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('=username')
+    search_fields = ('=username',)
     pagination_class = PageNumberPagination
     permission_classes = [IsAdmin]
     lookup_field = 'username'
 
-    @action(methods=['get', 'patch'], detail=False,
+    @action(methods=['get', 'patch', 'post'], detail=False,
             permission_classes=[IsAuthenticated])
     def me(self, request):
         if request.method == "GET":
@@ -176,7 +171,6 @@ def get_confirmation_code(request):
     )
 
 
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def get_token(request):
@@ -211,11 +205,11 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrIsModeratorOwnerOrReadOnly]
 
     def get_queryset(self):
-        review = get_object_or_404(Reviews, pk=self.kwargs.get("review_id"))
+        review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
         return review.comments.all()
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
         review_id = self.kwargs.get('review_id')
-        review = get_object_or_404(Reviews, pk=review_id, title=title_id)
+        review = get_object_or_404(Review, pk=review_id, title=title_id)
         serializer.save(author=self.request.user, review=review)
