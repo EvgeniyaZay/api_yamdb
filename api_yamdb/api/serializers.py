@@ -18,22 +18,20 @@ class UserSerializers(serializers.ModelSerializer):
     )
 
     def validate_username(self, username):
-        duplicate_name = User.objects.filter(
+        if User.objects.filter(
             username=username
-        ).exists()
-        if duplicate_name:
+        ).exists():
             raise serializers.ValidationError(
                 'Пользователь с таким именем уже существует'
             )
         return username
 
     def validate_email(self, email):
-        duplicate_email = User.objects.filter(
+        if User.objects.filter(
             email=email
-        ).exists()
-        if duplicate_email:
+        ).exists():
             raise serializers.ValidationError(
-                'Пользователь с таким emial уже существует'
+                'Пользователь с таким email уже существует'
             )
         return email
 
@@ -63,7 +61,7 @@ class GetCodeSerializer(serializers.ModelSerializer):
     def validate_username(self, username):
         if username == 'me':
             raise serializers.ValidationError(
-                'Недопустимое имя пользователя'
+                'Имя пользователя "me" запрещено!'
             )
         return username
 
