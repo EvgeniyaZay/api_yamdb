@@ -18,10 +18,6 @@ class UserSerializers(serializers.ModelSerializer):
     )
 
     def validate_username(self, username):
-        if username == 'me':
-            raise serializers.ValidationError(
-                'Недопустимое имя пользователя'
-            )
         duplicate_name = User.objects.filter(
             username=username
         ).exists()

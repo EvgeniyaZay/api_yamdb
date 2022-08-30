@@ -72,7 +72,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdmin]
     lookup_field = 'username'
 
-    @action(methods=['get', 'patch', 'post'], detail=False,
+    @action(methods=['get', 'patch'], detail=False,
             permission_classes=[IsAuthenticated])
     def me(self, request):
         if request.method == "GET":
@@ -106,7 +106,7 @@ class UserViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def get_confirmation_code(request):
-    """Получение кода на указанный маил"""
+    """Получение кода на указанный email"""
     serializer = GetCodeSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data.get('email')
