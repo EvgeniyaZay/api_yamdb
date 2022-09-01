@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Categories, Comments, Genres, Review, Title, TitleGenre, User
-
-
-class CategorisAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
-    prepopulated_fields = {'slug': ('name, ')}
+from .models import (Comments,
+                     Genres,
+                     Review,
+                     Title,
+                     TitleGenre,
+                     User)
 
 
 class CommentsAdmin(admin.ModelAdmin):
@@ -60,7 +60,6 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('username', )
 
 
-admin.site.register(Categories, CategorisAdmin)
 admin.site.register(Comments, CommentsAdmin)
 admin.site.register(Genres, GenresAdmin)
 admin.site.register(Title, TitleAdmin)
