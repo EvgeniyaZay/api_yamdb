@@ -10,8 +10,8 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.pagination import PageNumberPagination
 
 from api.permissions import IsAdmin
-from api.serializers import GetCodeSerializer, GetTokenSerializer, UserSerializers
-
+from serializers import GetCodeSerializer, GetTokenSerializer, UserSerializers
+from .serializers import UserSerializers
 from .models import User, UserRole
 
 
