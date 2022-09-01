@@ -12,6 +12,8 @@ from rest_framework.pagination import PageNumberPagination
 from api.permissions import IsAdmin
 from serializers import GetCodeSerializer, GetTokenSerializer, UserSerializers
 from .serializers import UserSerializers
+from user.serializers import GetCodeSerializer, GetTokenSerializer, UserSerializers
+
 from .models import User, UserRole
 
 
