@@ -1,9 +1,9 @@
-from enum import Enum
+import datetime
 
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.core.validators import RegexValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
+
+from user.models import User
 
 SLUG_VALIDATOR = RegexValidator(r'^[-a-zA-Z0-9_]+$')
 
@@ -137,7 +137,8 @@ class Title(models.Model):
         verbose_name='Произведение'
     )
     year = models.IntegerField(
-        verbose_name='Год издания'
+        verbose_name='Год издания',
+        validators=[MaxValueValidator(datetime.datetime.now().year)]
     )
     category = models.ForeignKey(
         Categories,
@@ -169,6 +170,9 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class TitleGenre(models.Model):
