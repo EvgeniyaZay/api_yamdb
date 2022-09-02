@@ -1,4 +1,5 @@
 import csv
+import logging
 
 from django.core.management import BaseCommand
 
@@ -31,6 +32,14 @@ TABLES = {
     Comments: 'comments.csv',
 }
 
+replace_field = [
+        'author',
+        'category',
+    ]
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     help = "Loads data from csv files"
@@ -42,7 +51,11 @@ class Command(BaseCommand):
                 'r',
                 encoding='utf-8'
             ) as csv_file:
-                reader = csv.DictReader(csv_file)
+                reader = csv.DictReader(csv_file, delimiter=',')
+                for index, field in enumerate(reader.fieldnames):
+                    if field in replace_field:
+                        reader.fieldnames[index] += '_id'
+                logger.info(f'Импорт данных в модель {model.__name__}.')
                 model.objects.bulk_create(
                     model(**data) for data in reader)
         self.stdout.write(self.style.SUCCESS('Successfully!'))
