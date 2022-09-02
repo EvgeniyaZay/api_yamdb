@@ -4,11 +4,19 @@ from django.core.validators import (MaxValueValidator,
                                     MinValueValidator,
                                     RegexValidator)
 from django.db import models
-
+from django.core.validators import ValidationError
 from user.models import User
 
 
 SLUG_VALIDATOR = RegexValidator(r'^[-a-zA-Z0-9_]+$')
+
+
+def year_validator(value):
+    if value > datetime.datetime.now().year:
+        raise ValidationError(
+            f'{value} год еще не наступил, введите другой год',
+            params={'value': value},
+        )
 
 
 class Categories(models.Model):
@@ -54,9 +62,9 @@ class Title(models.Model):
         max_length=256,
         verbose_name='Произведение'
     )
-    year = models.IntegerField(
+    year = models.PositiveSmallIntegerField(
         verbose_name='Год издания',
-        validators=[MaxValueValidator(datetime.datetime.now().year)]
+        validators=[year_validator]
     )
     category = models.ForeignKey(
         Categories,

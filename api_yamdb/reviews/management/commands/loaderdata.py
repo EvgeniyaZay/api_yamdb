@@ -1,4 +1,5 @@
 import csv
+import logging
 
 from django.core.management import BaseCommand
 
@@ -10,6 +11,7 @@ from reviews.models import (
     Review,
     Title
 )
+
 from user.models import (
     User
 )
@@ -29,6 +31,14 @@ TABLES = {
     Review: 'review.csv',
     Comments: 'comments.csv',
 }
+
+replace_field = [
+        'author',
+        'category',
+    ]
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 replace_field = [
     'author',
@@ -51,6 +61,11 @@ class Command(BaseCommand):
                     if field in replace_field:
                         reader.fieldnames[index] += '_id'
                 print(f'Импорт данных в модель {model.__name__}.')
+                reader = csv.DictReader(csv_file, delimiter=',')
+                for index, field in enumerate(reader.fieldnames):
+                    if field in replace_field:
+                        reader.fieldnames[index] += '_id'
+                logger.info(f'Импорт данных в модель {model.__name__}.')
                 model.objects.bulk_create(
                     model(**data) for data in reader)
         self.stdout.write(self.style.SUCCESS('Successfully!'))
