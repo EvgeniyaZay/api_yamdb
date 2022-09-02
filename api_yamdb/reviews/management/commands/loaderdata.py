@@ -32,10 +32,8 @@ TABLES = {
     Comments: 'comments.csv',
 }
 
-replace_field = [
-        'author',
-        'category',
-    ]
+replace_field = ['author',
+                 'category', ]
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

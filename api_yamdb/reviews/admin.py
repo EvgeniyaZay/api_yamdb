@@ -5,7 +5,6 @@ from .models import (Comments,
                      Title,
                      TitleGenre,
                      User)
-from .models import Categories, Comments, Genres, Review, Title, TitleGenre, User
 
 
 class CategorisAdmin(admin.ModelAdmin):
