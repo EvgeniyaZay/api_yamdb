@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import (Comments,
+from .models import (Categories,
+                     Comments,
                      Genres,
                      Review,
                      Title,
