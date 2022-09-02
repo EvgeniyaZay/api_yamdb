@@ -4,7 +4,7 @@ from .models import Categories, Comments, Genres, Review, Title, TitleGenre, Use
 
 class CategorisAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
-    prepopulated_fields = {'slug': ('name, ')}
+    prepopulated_fields = {'slug': ('name',)}
 
 
 class CommentsAdmin(admin.ModelAdmin):
