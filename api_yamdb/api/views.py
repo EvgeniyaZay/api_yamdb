@@ -4,16 +4,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.pagination import PageNumberPagination
 
-
 from reviews.models import Categories, Genres, Review, Title
-
 from .filters import TitlesFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import (AdminOrReadOnly,
                           IsAdminOrIsModeratorOwnerOrReadOnly)
 from .serializers import (CategoriesSerializers, CommentSerializer,
                           GenreSerializer, ReadOnlyTitleSerializer,
-                          ReviewSerializer, TitleSerializer,)
+                          ReviewSerializer, TitleSerializer, )
 
 
 class TitlesViewSet(viewsets.ModelViewSet):

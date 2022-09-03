@@ -4,13 +4,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.pagination import PageNumberPagination
 
 from api.permissions import IsAdmin
-from api.serializers import GetCodeSerializer, GetTokenSerializer, UserSerializers
+from user.serializers import GetCodeSerializer, GetTokenSerializer, UserSerializers
 
 from .models import User, UserRole
 

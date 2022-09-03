@@ -46,7 +46,7 @@ class UserSerializers(serializers.ModelSerializer):
 
     def validate_username(self, username):
         if User.objects.filter(
-            username=username
+                username=username
         ).exists():
             raise serializers.ValidationError(
                 'Пользователь с таким именем уже существует'
@@ -55,7 +55,7 @@ class UserSerializers(serializers.ModelSerializer):
 
     def validate_email(self, email):
         if User.objects.filter(
-            email=email
+                email=email
         ).exists():
             raise serializers.ValidationError(
                 'Пользователь с таким email уже существует'

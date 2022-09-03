@@ -11,7 +11,6 @@ from reviews.models import (
     Review,
     Title
 )
-
 from user.models import (
     User
 )
@@ -47,9 +46,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         for model, csv_f in TABLES.items():
             with open(
-                f'./static/data/{csv_f}',
-                'r',
-                encoding='utf-8'
+                    f'./static/data/{csv_f}',
+                    'r',
+                    encoding='utf-8'
             ) as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=',')
                 for index, field in enumerate(reader.fieldnames):
