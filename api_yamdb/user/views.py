@@ -10,7 +10,11 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api.permissions import IsAdmin
-from user.serializers import GetCodeSerializer, GetTokenSerializer, UserSerializers
+from user.serializers import (
+    GetCodeSerializer,
+    GetTokenSerializer,
+    UserSerializers
+)
 
 from .models import User, UserRole
 

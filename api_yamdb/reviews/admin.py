@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import Categories, Comments, Genres, Review, Title, TitleGenre, User
+from .models import (
+    Categories,
+    Comments,
+    Genres,
+    Review,
+    Title,
+    TitleGenre,
+    User
+)
 
 
 class CategorisAdmin(admin.ModelAdmin):
